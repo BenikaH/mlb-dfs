@@ -218,7 +218,7 @@ def addtoDb(con, data, tblname, tbltype, year):
     
 def main():
     
-    local = True
+    local = False
 
     if local == False:
         fldr = 'mlb-dfs/'
@@ -358,25 +358,27 @@ def main():
         }
     }
     
-    # for urls in teamUrlName:
-    #     if teamUrlDict[urls]['headers'] == 1:
-    #         headers = teamheader1
-    #     else:
-    #         headers = teamheader2
-    #     tblname = teamUrlDict[urls]['tblname']
-    #     database = teamUrlDict[urls]['database']
-    #     print urls, "\n"
-    #     data = getteamdata(teamUrlDict[urls]['url'], headers)
-    #     addtoDb(con, data, tblname, database, yearLst)
-        
-    # for urls in hitterUrlName:
-    #     headers = hitterheader1
-    #     tblname = hitterUrlDict[urls]['tblname']
-    #     database = hitterUrlDict[urls]['database']
-    #     print urls, "\n"
-    #     data = getplayerdata(hitterUrlDict[urls]['url'], headers)
-    #     # print data
-    #     addtoDb(con, data, tblname, database, yearLst)
+    for urls in teamUrlName:
+        if teamUrlDict[urls]['headers'] == 1:
+            headers = teamheader1
+        else:
+            headers = teamheader2
+        tblname = teamUrlDict[urls]['tblname']
+        database = teamUrlDict[urls]['database']
+        print urls, "\n"
+        data = getteamdata(teamUrlDict[urls]['url'], headers)
+        addtoDb(con, data, tblname, database, yearLst)
+        time.sleep(1)
+
+    for urls in hitterUrlName:
+        headers = hitterheader1
+        tblname = hitterUrlDict[urls]['tblname']
+        database = hitterUrlDict[urls]['database']
+        print urls, "\n"
+        data = getplayerdata(hitterUrlDict[urls]['url'], headers)
+        # print data
+        addtoDb(con, data, tblname, database, yearLst)
+        time.sleep(1)
         
     for urls in pitcherUrlName:
         headers = pitcherheader1
@@ -386,6 +388,7 @@ def main():
         data = getplayerdata(pitcherUrlDict[urls]['url'], headers)
         # print data
         addtoDb(con, data, tblname, database, yearLst)
+        time.sleep(1)
         
     
 if __name__ == '__main__':
