@@ -250,7 +250,7 @@ def main():
     
     urlNameOld = ['13-15_Total_FIP', '2015_Total_FIP']
     
-    teamUrllName = ['TeamHitting_Total', 'TeamHitting_Total_vL', 'TeamHitting_Total_vR',\
+    teamUrlName = ['TeamHitting_Total', 'TeamHitting_Total_vL', 'TeamHitting_Total_vR',\
                     'TeamHitting_Season', 'TeamHitting_Season_vL', 'TeamHitting_Season_vR',\
                     'TeamHitting_Last14']
     
