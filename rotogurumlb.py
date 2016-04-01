@@ -129,6 +129,22 @@ def addtoDb(con, players, data, datestr):
         
     return
 
+def datestring(month, day, year):
+    
+    if month < 10:
+        monthstr = '0' + str(month)
+    else:
+        monthstr = str(month)
+        
+    if day < 10:
+        daystr = '0' + str(day)
+    else:
+        daystr = str(day)
+    
+    datestr = str(year) + monthstr + daystr
+    
+    return datestr
+
 def main():
 
     local = False
@@ -146,17 +162,7 @@ def main():
     day = 29
     year = 2015
     
-    if month < 10:
-        monthstr = '0' + str(month)
-    else:
-        monthstr = str(month)
-        
-    if day < 10:
-        daystr = '0' + str(day)
-    else:
-        daystr = str(day)
-    
-    datestr = str(year) + monthstr + daystr
+    datestr = datestring(month, day, year)
 
     dkurl = 'http://rotoguru1.com/cgi-bin/byday.pl?game=dk&month='+str(month)+'&day='+str(day)+'&year='+str(year)+'&scsv=1'
     fdurl = 'http://rotoguru1.com/cgi-bin/byday.pl?game=fd&month='+str(month)+'&day='+str(day)+'&year='+str(year)+'&scsv=1'
