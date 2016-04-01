@@ -108,7 +108,7 @@ def combinesites(dkdata, fddata):
 
 def addtoDb(con, players, data, datestr):
     
-    query = "DELETE FROM %s WHERE day = %s" % (datestr)
+    query = "DELETE FROM rotoguru WHERE day = %s" % (datestr)
     x = con.cursor()
     x.execute(query)
     
