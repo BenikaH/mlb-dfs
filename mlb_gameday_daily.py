@@ -194,6 +194,8 @@ def hitTypes(hittype, text):
             
 def getumpires(gameinfo):
     
+    umpkeys = ['1B', '2B', '3B', 'HP']
+    
     regex = r'<umpire (.*?)>'   # Umpires are in a set of umpire tags
     
     umpires = re.findall(regex,gameinfo)
@@ -224,6 +226,11 @@ def getumpires(gameinfo):
         for ump in umpholder:
             if ump[2] == pos:
                 umpDict[pos] = [ump[0],ump[1]]
+    
+    for key in umpkeys:
+        if key not in umpDict.keys():
+            umpDict[key] = ['','']
+    
     return umpDict    
 
 def getvenue(boxscore):
