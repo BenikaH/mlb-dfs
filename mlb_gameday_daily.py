@@ -253,7 +253,7 @@ def addtoDb(con, gamedata, datestr):
                             "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                             "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                             "'"%s"'", "'"%s"'", "'"%s"'")" % \
-                (i['day'], i['id'], i['name'], i['playernm_full'], i['pos'], i['ab'], i['r'], \
+                (i['day'], i['id'], i['name'], i['name_display_first_last'], i['pos'], i['ab'], i['r'], \
                 i['h'], i['bb'], i['so'], i['hr'], i['rbi'], i['avg'], i['sac'], \
                 i['ao'], i['go'], i['sb'], i['cs'], i['lob'], i['hbp'], i['po'], \
                 i['bo'], i['d'], i['a'], i['e'], i['t'], i['sf'], i['gidp'], \
