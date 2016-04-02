@@ -77,6 +77,16 @@ def getdailydata(datestr):
     return gamedirList
 
 def getgamedata(game, datestr):
+    
+    defaultkeys = ['day', 'id', 'name', 'name_display_first_last', 'pos', 'ab', 'r', \
+                    'h', 'bb', 'so', 'hr', 'rbi', 'avg', 'sac', \
+                    'ao', 'go', 'sb', 'cs', 'lob', 'hbp', 'po', \
+                    'bo', 'd', 'a', 'e', 't', 'sf', 'gidp', \
+                    '2b', '3b', 'fdp', 'dkp', 'fldg', 's_r', 's_h', \
+                    's_bb', 's_so', 's_hr', 's_rbi', 'note', 'hp_umpnm', 'hp_umpid', \
+                    '1b_umpnm', '1b_umpid', '2b_umpnm', '2b_umpid', '3b_umpnm', '3b_umpid', 'venuenm', \
+                    'venue_id', 'weather', 'wind']
+
 # Open boxscore json file in directory
     url = "http://gd2.mlb.com" + game + "/boxscore.json"
     print url
@@ -147,6 +157,9 @@ def getgamedata(game, datestr):
             batter["fdp"] = fdp  
             batter["dkp"] = dkp
             
+            for key in defaultkeys:
+                if key not in batter.keys():
+                    batter[key] = ''
             playerList.append(batter)
             
     # print len(playerList)
