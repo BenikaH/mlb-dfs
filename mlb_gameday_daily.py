@@ -138,10 +138,10 @@ def getgamedata(game, datestr):
             batter["3b_umpnm"] = umpires["3B"][1]
             ##### End Umpire Info
             
-            fdp = (int(batter["h"]) + int(batter["2B"]) + int(batter["3B"]) * 2 + int(batter["hr"]) * 3 \
+            fdp = (int(batter["h"]) + int(batter["2b"]) + int(batter["3b"]) * 2 + int(batter["hr"]) * 3 \
              + int(batter["r"]) + int(batter["rbi"]) + int(batter["bb"]) + int(batter["hbp"]) \
              + int(batter["sb"]) * 2) - ((int(batter["ab"]) - int(batter["h"])) * 0.25)
-            dkp = (int(batter["h"]) * 3 + int(batter["2B"]) * 2 + int(batter["3B"]) * 5 + int(batter["hr"]) * 7 \
+            dkp = (int(batter["h"]) * 3 + int(batter["2b"]) * 2 + int(batter["3b"]) * 5 + int(batter["hr"]) * 7 \
              + int(batter["r"]) * 2 + int(batter["rbi"]) * 2 + int(batter["bb"]) * 2 + int(batter["hbp"]) * 2 \
              + int(batter["sb"]) * 5) - (int(batter["cs"]) * 2)
             batter["fdp"] = fdp  
