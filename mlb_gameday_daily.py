@@ -89,7 +89,7 @@ def getgamedata(game, datestr, playerList):
 
 # Open boxscore json file in directory
     url = "http://gd2.mlb.com" + game + "/boxscore.json"
-    print url
+
     try:
         htmltext = requests.get(url)
     except:
@@ -292,14 +292,24 @@ def main():
         fldr = ''
         con = MySQLdb.connect('localhost', 'root', '', 'dfs-mlb')            #### Localhost connection
         
-    datestr = '20150531'
-    games = getdailydata(datestr)           # List
-    playerList = []
-    # print games
-    for game in games:
-        gamedata = getgamedata(game, datestr, playerList)
+    # datestr = '20150531'
+    
+    myfile = fldr + 'daterun.txt'
+    with open(myfile) as f:
+        g = f.read().splitlines()
+        for date in g:
+            datestr = date
+            
+            games = getdailydata(datestr)           # List
+            if games is not None:
+                playerList = []
+                # print games
+                for game in games:
+                    gamedata = getgamedata(game, datestr, playerList)
         
-    addtoDb(con, gamedata, datestr)
+                addtoDb(con, gamedata, datestr)
+            else:
+                print datestr, 'does not exist'
     
     return
     
