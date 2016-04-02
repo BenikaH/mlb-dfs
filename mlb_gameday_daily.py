@@ -62,9 +62,11 @@ def getdailydata(datestr):
     year = datestr[:4]
 
     htmltext = requests.get("http://gd2.mlb.com/components/game/mlb/year_"+year+"/month_"+month+"/day_"+day+"/master_scoreboard.json").json()
-    # toplevel = json.load(htmltext)
-    # games = toplevel["data"]["games"]["game"]
-    games = htmltext["data"]["games"]["game"]
+
+    try:
+        games = htmltext["data"]["games"]["game"]
+    except:
+        return
     
     # Go through game info and pull directory list of games -- these links provide the data    
     gamedirList = []
