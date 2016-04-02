@@ -313,8 +313,11 @@ def main():
                 playerList = []
                 for game in games:
                     gamedata = getgamedata(game, datestr, playerList)
-        
-                addtoDb(con, gamedata, datestr)
+                
+                if gamedata is not None:
+                    addtoDb(con, gamedata, datestr)
+                else:
+                    print "no gamedata"
             else:
                 print datestr, 'does not exist'
     
