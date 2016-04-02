@@ -76,7 +76,7 @@ def getdailydata(datestr):
     
     return gamedirList
 
-def getgamedata(game, datestr):
+def getgamedata(game, datestr, playerList):
     
     defaultkeys = ['day', 'id', 'name', 'name_display_first_last', 'pos', 'ab', 'r', \
                     'h', 'bb', 'so', 'hr', 'rbi', 'avg', 'sac', \
@@ -101,7 +101,6 @@ def getgamedata(game, datestr):
     venue = getvenue(boxdata)
     weather = getweather(gameinfo)
     umpires = getumpires(gameinfo)
-    playerList = []
     for i in range(0,2):        # Home and Away
         batters = boxdata["batting"][i]["batter"]
         textdata = boxdata["batting"][i]["text_data"]
@@ -295,10 +294,12 @@ def main():
         
     datestr = '20150531'
     games = getdailydata(datestr)           # List
+    playerList = []
     # print games
     for game in games:
-        gamedata = getgamedata(game, datestr)
-        addtoDb(con, gamedata, datestr)
+        gamedata = getgamedata(game, datestr, playerList)
+        
+    addtoDb(con, gamedata, datestr)
     
     return
     
