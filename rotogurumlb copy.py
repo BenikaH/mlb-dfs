@@ -133,28 +133,21 @@ def addtoDb(con, players, data, datestr):
 
     return
 
-def datestring(dt):
-
-    year = dt.year
-    month = dt.month
-    day = dt.day
-
-    if day < 10:
-        day = '0' + str(day)
-    else:
-        day = str(day)
+def datestring(month, day, year):
 
     if month < 10:
-        month = '0' + str(month)
+        monthstr = '0' + str(month)
     else:
-        month = str(month)
+        monthstr = str(month)
 
-    datestr = str(year) + '-' + month + '-' + day
-    dayid = str(year) + month + day
+    if day < 10:
+        daystr = '0' + str(day)
+    else:
+        daystr = str(day)
 
-    dates = [datestr, dayid]
+    datestr = str(year) + monthstr + daystr
 
-    return dates
+    return datestr
 
 def main():
 
@@ -168,34 +161,43 @@ def main():
     else:
         fldr = ''
         con = MySQLdb.connect('localhost', 'root', '', 'dfs-mlb')            #### Localhost connection
-        
-    gameday = datetime.date.today() - datetime.timedelta(days=1)            #### Get yesterday's results
-    datestr = datestring(gameday)[0]
 
-    print datestr, "Started"
-    day = datestr[-2:]
-    month = datestr[4:6]
-    year = datestr[:4]
+    # month = 4
+    # day = 29
+    # year = 2015
 
-    dkurl = 'http://rotoguru1.com/cgi-bin/byday.pl?game=dk&month='+str(month)+'&day='+str(day)+'&year='+str(year)+'&scsv=1'
-    fdurl = 'http://rotoguru1.com/cgi-bin/byday.pl?game=fd&month='+str(month)+'&day='+str(day)+'&year='+str(year)+'&scsv=1'
+    myfile = fldr + 'daterun.txt'
+    with open(myfile) as f:
+        g = f.read().splitlines()
+        for date in g:
+            datestr = date
 
-    dkdata = getplayerdata(dkurl)
+    # for day in range(1,31):
+    #     datestr = datestring(month, day, year)
+            print datestr, "Started"
+            day = datestr[-2:]
+            month = datestr[4:6]
+            year = datestr[:4]
 
-    if dkdata is not None:
+            dkurl = 'http://rotoguru1.com/cgi-bin/byday.pl?game=dk&month='+str(month)+'&day='+str(day)+'&year='+str(year)+'&scsv=1'
+            fdurl = 'http://rotoguru1.com/cgi-bin/byday.pl?game=fd&month='+str(month)+'&day='+str(day)+'&year='+str(year)+'&scsv=1'
 
-        fddata = getplayerdata(fdurl)
-        playerdata = combinesites(dkdata, fddata)
-        players = playerdata.keys()
-        print playerdata[players[1]]
+            dkdata = getplayerdata(dkurl)
 
-        addtoDb(con, players, playerdata, datestr)
-        print datestr, "Complete"
-        time.sleep(1)
+            if dkdata is not None:
 
-    else:
-        print datestr, "Does Not Exist"
-        time.sleep(1)
+                fddata = getplayerdata(fdurl)
+                playerdata = combinesites(dkdata, fddata)
+                players = playerdata.keys()
+                print playerdata[players[1]]
+
+                addtoDb(con, players, playerdata, datestr)
+                print datestr, "Complete"
+                time.sleep(1)
+
+            else:
+                print datestr, "Does Not Exist"
+                time.sleep(1)
 
     return
 
