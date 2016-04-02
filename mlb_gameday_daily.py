@@ -90,79 +90,77 @@ def getgamedata(game, datestr, playerList):
 # Open boxscore json file in directory
     url = "http://gd2.mlb.com" + game + "/boxscore.json"
 
-    try:
-        htmltext = requests.get(url)
-    except:
+    htmltext = requests.get(url)
+    if htmltext.status_code == 404:
         return
-    boxscore = htmltext.json()
-    boxdata = boxscore["data"]["boxscore"]
-    gameinfo = boxdata["game_info"]
-    batting = boxdata["batting"]
-    venue = getvenue(boxdata)
-    weather = getweather(gameinfo)
-    umpires = getumpires(gameinfo)
-    for i in range(0,2):        # Home and Away
-        batters = boxdata["batting"][i]["batter"]
-        textdata = boxdata["batting"][i]["text_data"]
-        for batter in batters:
-            batter["2b"] = 0
-            batter["3b"] = 0
-        # Append double data
-        doubles = hitTypes('doubles',textdata)
-        if not doubles:
-            doubles = []
-        for players in doubles:
+    else:
+        boxscore = htmltext.json()
+        boxdata = boxscore["data"]["boxscore"]
+        gameinfo = boxdata["game_info"]
+        batting = boxdata["batting"]
+        venue = getvenue(boxdata)
+        weather = getweather(gameinfo)
+        umpires = getumpires(gameinfo)
+        for i in range(0,2):        # Home and Away
+            batters = boxdata["batting"][i]["batter"]
+            textdata = boxdata["batting"][i]["text_data"]
             for batter in batters:
-                if batter["name"] == players[0]:
-                    batter["2b"] = players[1]
-        # Append triple data
-        triples = hitTypes('triples',textdata)
-        if not triples:
-            triples = []
-        for players in triples:
+                batter["2b"] = 0
+                batter["3b"] = 0
+            # Append double data
+            doubles = hitTypes('doubles',textdata)
+            if not doubles:
+                doubles = []
+            for players in doubles:
+                for batter in batters:
+                    if batter["name"] == players[0]:
+                        batter["2b"] = players[1]
+            # Append triple data
+            triples = hitTypes('triples',textdata)
+            if not triples:
+                triples = []
+            for players in triples:
+                for batter in batters:
+                    if batter["name"] == players[0]:
+                        batter["3b"] = players[1]                    
             for batter in batters:
-                if batter["name"] == players[0]:
-                    batter["3b"] = players[1]                    
-        for batter in batters:
-            batter["day"] = datestr    # Add Date Info
+                batter["day"] = datestr    # Add Date Info
             
-            ##### Add Venue Info
-            batter["venue_id"] = venue[0]
-            batter["venuenm"] = venue[1]
-            ##### End Venue
+                ##### Add Venue Info
+                batter["venue_id"] = venue[0]
+                batter["venuenm"] = venue[1]
+                ##### End Venue
             
-            ##### Add Weather Info
-            batter["weather"] = weather[0]
-            batter["wind"] = weather[1]
-            ##### End Weather
+                ##### Add Weather Info
+                batter["weather"] = weather[0]
+                batter["wind"] = weather[1]
+                ##### End Weather
             
-            ##### Add Umpire Info
-            batter["hp_umpid"] = umpires["HP"][0]
-            batter["hp_umpnm"] = umpires["HP"][1]
-            batter["1b_umpid"] = umpires["1B"][0]
-            batter["1b_umpnm"] = umpires["1B"][1]
-            batter["2b_umpid"] = umpires["2B"][0]
-            batter["2b_umpnm"] = umpires["2B"][1]
-            batter["3b_umpid"] = umpires["3B"][0]
-            batter["3b_umpnm"] = umpires["3B"][1]
-            ##### End Umpire Info
+                ##### Add Umpire Info
+                batter["hp_umpid"] = umpires["HP"][0]
+                batter["hp_umpnm"] = umpires["HP"][1]
+                batter["1b_umpid"] = umpires["1B"][0]
+                batter["1b_umpnm"] = umpires["1B"][1]
+                batter["2b_umpid"] = umpires["2B"][0]
+                batter["2b_umpnm"] = umpires["2B"][1]
+                batter["3b_umpid"] = umpires["3B"][0]
+                batter["3b_umpnm"] = umpires["3B"][1]
+                ##### End Umpire Info
             
-            fdp = (int(batter["h"]) + int(batter["2b"]) + int(batter["3b"]) * 2 + int(batter["hr"]) * 3 \
-             + int(batter["r"]) + int(batter["rbi"]) + int(batter["bb"]) + int(batter["hbp"]) \
-             + int(batter["sb"]) * 2) - ((int(batter["ab"]) - int(batter["h"])) * 0.25)
-            dkp = (int(batter["h"]) * 3 + int(batter["2b"]) * 2 + int(batter["3b"]) * 5 + int(batter["hr"]) * 7 \
-             + int(batter["r"]) * 2 + int(batter["rbi"]) * 2 + int(batter["bb"]) * 2 + int(batter["hbp"]) * 2 \
-             + int(batter["sb"]) * 5) - (int(batter["cs"]) * 2)
-            batter["fdp"] = fdp  
-            batter["dkp"] = dkp
+                fdp = (int(batter["h"]) + int(batter["2b"]) + int(batter["3b"]) * 2 + int(batter["hr"]) * 3 \
+                 + int(batter["r"]) + int(batter["rbi"]) + int(batter["bb"]) + int(batter["hbp"]) \
+                 + int(batter["sb"]) * 2) - ((int(batter["ab"]) - int(batter["h"])) * 0.25)
+                dkp = (int(batter["h"]) * 3 + int(batter["2b"]) * 2 + int(batter["3b"]) * 5 + int(batter["hr"]) * 7 \
+                 + int(batter["r"]) * 2 + int(batter["rbi"]) * 2 + int(batter["bb"]) * 2 + int(batter["hbp"]) * 2 \
+                 + int(batter["sb"]) * 5) - (int(batter["cs"]) * 2)
+                batter["fdp"] = fdp  
+                batter["dkp"] = dkp
             
-            for key in defaultkeys:
-                if key not in batter.keys():
-                    batter[key] = ''
-            playerList.append(batter)
+                for key in defaultkeys:
+                    if key not in batter.keys():
+                        batter[key] = ''
+                playerList.append(batter)
             
-    # print len(playerList)
-    
     return playerList
 
 # Function to scrape the text data from the boxscore for info like doubles, triples, etc.
@@ -301,9 +299,9 @@ def main():
             datestr = date
             
             games = getdailydata(datestr)           # List
+            print games
             if games is not None:
                 playerList = []
-                # print games
                 for game in games:
                     gamedata = getgamedata(game, datestr, playerList)
         
