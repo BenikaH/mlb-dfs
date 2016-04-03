@@ -170,7 +170,7 @@ def main():
         con = MySQLdb.connect('localhost', 'root', '', 'dfs-mlb')            #### Localhost connection
         
     gameday = datetime.date.today() - datetime.timedelta(days=1)            #### Get yesterday's results
-    datestr = datestring(gameday)[0]
+    datestr = datestring(gameday)[1]
 
     print datestr, "Started"
     day = datestr[-2:]

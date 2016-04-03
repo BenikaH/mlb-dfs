@@ -299,22 +299,27 @@ def main():
         fldr = ''
         con = MySQLdb.connect('localhost', 'root', '', 'dfs-mlb')            #### Localhost connection
         
-    gameday = datetime.date.today() - datetime.timedelta(days=1)            #### Get yesterday's results
-    datestr = datestring(gameday)[1]
+    # datestr = '20150531'
+    
+    myfile = fldr + 'daterun.txt'
+    with open(myfile) as f:
+        g = f.read().splitlines()
+        for date in g:
+            datestr = date
             
-    games = getdailydata(datestr)           # List
-    print games
-    if games is not None:
-        playerList = []
-        for game in games:
-            gamedata = getgamedata(game, datestr, playerList)
-        
-        if gamedata is not None:
-            addtoDb(con, gamedata, datestr)
-        else:
-            print "no gamedata"
-    else:
-        print datestr, 'does not exist'
+            games = getdailydata(datestr)           # List
+            print games
+            if games is not None:
+                playerList = []
+                for game in games:
+                    gamedata = getgamedata(game, datestr, playerList)
+                
+                if gamedata is not None:
+                    addtoDb(con, gamedata, datestr)
+                else:
+                    print "no gamedata"
+            else:
+                print datestr, 'does not exist'
     
     return
     
