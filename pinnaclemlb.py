@@ -273,7 +273,7 @@ def security(site,fldr):
 
 def main():
     
-    local = True
+    local = False
 
     if local == False:
         fldr = 'mlb-dfs/'
