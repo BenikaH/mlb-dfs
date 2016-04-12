@@ -52,12 +52,12 @@ def getData(dates):
             game.append(event['Totals']['OverPrice'])
             game.append(event['Totals']['UnderPrice'])
             
-            print '\neventID:', event['EventId']                        # Game ID
-            print 'date:', gamedate
-            print 'time:', gametime
-            print 'total:', total
-            print 'Over Price:', event['Totals']['OverPrice']    # Over Odds
-            print 'Under Price:', event['Totals']['UnderPrice']  # Under Odds
+            # print '\neventID:', event['EventId']                        # Game ID
+            # print 'date:', gamedate
+            # print 'time:', gametime
+            # print 'total:', total
+            # print 'Over Price:', event['Totals']['OverPrice']    # Over Odds
+            # print 'Under Price:', event['Totals']['UnderPrice']  # Under Odds
             
         
             for participants in event['Participants']:
@@ -85,11 +85,11 @@ def getData(dates):
                 game.append(participants['Handicap']['Price'])
                 game.append(teamTotal)
                 # game.append(participants['TeamTotals']['Min'])
-                print 'Team:', participants['Name']                  # Team
-                print 'ML:', participants['MoneyLine']               # Moneyline
-                print 'Spread:', participants['Handicap']['Min']     # Spread
-                print 'Odds:', participants['Handicap']['Price']     # Spread Odds
-                print 'Team Total:', teamTotal                     # Team Total
+                # print 'Team:', participants['Name']                  # Team
+                # print 'ML:', participants['MoneyLine']               # Moneyline
+                # print 'Spread:', participants['Handicap']['Min']     # Spread
+                # print 'Odds:', participants['Handicap']['Price']     # Spread Odds
+                # print 'Team Total:', teamTotal                     # Team Total
             if dates[0] == game[1]:
                 gameList.append(game)
         game = []
@@ -153,18 +153,22 @@ def consensus():
     gameList = [game[i:i+8] for i in range(0, len(game), 8)]
     bet_pct = {}
     for game in gameList:
+        for items in game:
+            if items == 'LAA Los Angeles Angels':       # Fix naming issue between two sites
+                game[game.index(items)] = 'LAA LAA Angels'
         if game[0] == 'consensus':
-            pct = float(game[1][:-1])/100
+            pct = float(game[1][:-1])/100.0
             bet_pct[game[3].split(' ', 1)[1]] = round(pct,2)
             bet_pct[game[5].split(' ', 1)[1]] = round(1-pct,2)
             # print game[3], pct, game[6], 1-pct
         else:
-            pct = float(game[0][:-1])/100
+            pct = float(game[0][:-1])/100.0
             bet_pct[game[2].split(' ', 1)[1]] = round(1-pct,2)
             # print game[2], ":", game[6]
             # print pct
             bet_pct[game[5].split(' ', 1)[1]] = round(pct,2)
             # print game[2], 1-pct, game[6], pct
+        # print bet_pct
 
     return bet_pct
     
@@ -178,14 +182,14 @@ def linemovement(con, gameinfo, dates):
 
     # bring in past results
         cur = con.cursor()
-        cur.execute("SELECT * FROM pinnacle_odds WHERE day = %s" % (dates[0]))
+        cur.execute("SELECT * FROM pinnacle_odds WHERE day_id = %s" % (dates[1]))
 
         rows = cur.fetchall()
         if len(rows) > 0:
             firstPull = False
         else:
             firstPull = True
-    print firstPull
+    # print firstPull
     # If this is the first run, insert in placeholders and make the opening lines set to the current lines
     if firstPull:
         for game in gameinfo:
@@ -205,15 +209,20 @@ def linemovement(con, gameinfo, dates):
                 holder.append(item)
             pastresults.append(holder)
             holder = []
-        print "\n\n", pastresults, "\n\n"
+        # print "\n\n", pastresults, "\n\n"
                 
         for past in pastresults:
             for game in gameinfo:
-                if past[5] == game['team'] and past[7] == game['opp']:
-                    game['total_chg'] = float(past[20]) - float(game['total'])
-                    game['team_total_chg'] = float(past[21]) - float(game['team_total'])
-                    game['opp_total_chg'] = float(past[22]) - float(game['opp_total'])
-                    game['spread_chg'] = float(past[23]) - float(game['spread'])
+                if past[5] == game['team'] and past[2] == game['game_id']:
+                    print past[5], past[2]
+                    game['total_open'] = past[21]
+                    game['team_total_open'] = past[22]
+                    game['opp_total_open'] = past[23]
+                    game['spread_open'] = past[24]
+                    game['total_chg'] = float(past[21]) - float(game['total'])
+                    game['team_total_chg'] = float(past[22]) - float(game['team_total'])
+                    game['opp_total_chg'] = float(past[23]) - float(game['opp_total'])
+                    game['spread_chg'] = float(past[24]) - float(game['spread'])
         
     return gameinfo
     
@@ -224,7 +233,6 @@ def addtoDb(con, dates, gamelist):
     x.execute(query)
 
     for i in gamelist:
-        print i
         with con:
             query = "INSERT INTO pinnacle_odds (day, day_id, game_id, time, home_away, team, pitcher, \
             opp, opp_pitcher, team_total, opp_total, total, ml, spread, \
