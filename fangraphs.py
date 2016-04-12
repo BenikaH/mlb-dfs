@@ -230,7 +230,7 @@ def main():
         con = MySQLdb.connect('localhost', 'root', '', 'dfs-mlb')            #### Localhost connection
     
     yearFst = 2013
-    yearLst = 2015
+    yearLst = 2016
     
     teamheader1 = ['season','team', 'pa', 'bb_pct', 'k_pct', 'bbk_ratio', 'avg', 'obp', 'slg', 'ops', 'iso', 'spd', 'babip', \
                 'ubr', 'wGDP', 'wSB', 'wRC', 'wRAA', 'wOBA', 'wRCplus']
