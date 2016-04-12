@@ -150,14 +150,17 @@ def getplayerdata(url, headers):
     return playerList
     
 def addtoDb(con, data, tblname, tbltype, year):
-
-    query = "DELETE FROM %s WHERE season = %s" % (tblname, year)
+    
+    if tbltype in [5,6,7,8]:
+        query = "DELETE FROM %s" % (tblname)
+    else:
+        query = "DELETE FROM %s WHERE season = %s" % (tblname, year)
     x = con.cursor()
     x.execute(query)
 
     for i in data:
         with con:
-            if tbltype == 1:
+            if tbltype == 1 or tbltype == 7:
                 query = "INSERT INTO %s (season, team, pa, bb_pct, k_pct, bbk_ratio, avg, \
                                         obp, slg, ops, iso, spd, babip, ubr, \
                                         wGDP, wSB, wRC, wRAA, wOBA, wRCplus) \
@@ -168,7 +171,7 @@ def addtoDb(con, data, tblname, tbltype, year):
                     i['season'], i['team'], i['pa'], i['bb_pct'], i['k_pct'], i['bbk_ratio'], i['avg'], \
                     i['obp'], i['slg'], i['ops'], i['iso'], i['spd'], i['babip'], i['ubr'], \
                     i['wGDP'], i['wSB'], i['wRC'], i['wRAA'], i['wOBA'], i['wRCplus'])
-            elif tbltype == 2:
+            elif tbltype == 2 or tbltype == 8:
                 query = "INSERT INTO %s (vsArm, season, team, pa, bb_pct, k_pct, bbk_ratio, \
                                         sb, avg, obp, slg, ops, iso, spd, \
                                         babip, wRC, wRAA, wOBA, wRCplus) \
@@ -179,7 +182,7 @@ def addtoDb(con, data, tblname, tbltype, year):
                     i['vsArm'], i['season'], i['team'], i['pa'], i['bb_pct'], i['k_pct'], i['bbk_ratio'], \
                     i['sb'], i['avg'], i['obp'], i['slg'], i['ops'], i['iso'], i['spd'], \
                     i['babip'], i['wRC'], i['wRAA'], i['wOBA'], i['wRCplus'])
-            elif tbltype == 3:
+            elif tbltype == 3 or tbltype == 5:
                 query = "INSERT INTO %s (vsArm, player_id, pos, season, playernm_full, team, pa, \
                                         bb_pct, k_pct, bbk_ratio, sb, avg, obp, slg, \
                                         ops, iso, spd, babip, wRC, wRAA, wOBA, \
@@ -193,7 +196,7 @@ def addtoDb(con, data, tblname, tbltype, year):
                     i['bb_pct'], i['k_pct'], i['bbk_ratio'], i['sb'], i['avg'], i['obp'], i['slg'], \
                     i['ops'], i['iso'], i['spd'], i['babip'], i['wRC'], i['wRAA'], i['wOBA'], \
                     i['wRCplus'], i['gbfb_ratio'], i['hrfb_ratio'])
-            elif tbltype == 4:
+            elif tbltype == 4 or tbltype == 6:
                 query = "INSERT INTO %s (player_id, pos, season, playernm_full, team, g, gs, \
                                         ip, k9, bb9, kbb_ratio, hr_per9, k_pct, bb_pct, \
                                         k_minus_bb_pct, avg, whip, babip, lob_pct, ERAminus, FIPminus, \
@@ -218,7 +221,7 @@ def addtoDb(con, data, tblname, tbltype, year):
     
 def main():
     
-    local = False
+    local = True
 
     if local == False:
         fldr = 'mlb-dfs/'
@@ -229,7 +232,7 @@ def main():
         fldr = ''
         con = MySQLdb.connect('localhost', 'root', '', 'dfs-mlb')            #### Localhost connection
     
-    yearFst = 2013
+    yearFst = 2014
     yearLst = 2016
     
     teamheader1 = ['season','team', 'pa', 'bb_pct', 'k_pct', 'bbk_ratio', 'avg', 'obp', 'slg', 'ops', 'iso', 'spd', 'babip', \
@@ -248,8 +251,6 @@ def main():
     pitcherStatUrls = ['http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c%2c7%2c8%2c13%2c36%2c37%2c38%2c40%2c-1%2c120%2c121%2c217%2c-1%2c41%2c42%2c43%2c44%2c-1%2c117%2c118%2c119%2c-1%2c6%2c45%2c124%2c-1%2c62%2c122&season='+str(yearLst)+'&month=0&season1='+str(yearFst)+'&ind=0&team=0&rost=0&age=0&filter=&players=0&page=1_5000', \
     'http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c%2c7%2c8%2c13%2c36%2c37%2c38%2c40%2c-1%2c120%2c121%2c217%2c-1%2c41%2c42%2c43%2c44%2c-1%2c117%2c118%2c119%2c-1%2c6%2c45%2c124%2c-1%2c62%2c122&season='+str(yearLst)+'&month=0&season1='+str(yearLst)+'&ind=0&team=0&rost=0&age=0&filter=&players=0&sort=21%2ca&page=1_5000']
     
-    urlNameOld = ['13-15_Total_FIP', '2015_Total_FIP']
-    
     teamUrlName = ['TeamHitting_Total', 'TeamHitting_Total_vL', 'TeamHitting_Total_vR',\
                     'TeamHitting_Season', 'TeamHitting_Season_vL', 'TeamHitting_Season_vR',\
                     'TeamHitting_Last14']
@@ -258,25 +259,25 @@ def main():
         'TeamHitting_Total': {
             'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=1&season='+str(yearLst)+'&month=0&season1='+str(yearFst)+'&ind=0&team=0%2cts&rost=0&age=0&filter=&players=0&sort=19%2cd&page=1_5000',
             'headers': 1,
-            'database': 1,
+            'database': 7,
             'tblname': 'teamhitting_total'
         },
         'TeamHitting_Season': {
             'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=1&season='+str(yearLst)+'&month=0&season1='+str(yearFst)+'&ind=1&team=0%2cts&rost=0&age=0&filter=&players=0&sort=19%2cd&page=1_5000',
             'headers': 1,
-            'database': 1,
+            'database': 7,
             'tblname': 'teamhitting_season'
         },
         'TeamHitting_Total_vL': {
             'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54&season='+str(yearLst)+'&month=13&season1='+str(yearFst)+'&ind=0&team=0,ts&rost=0&age=0&filter=&players=0',
             'headers': 2,
-            'database': 2,
+            'database': 8,
             'tblname': 'teamhitting_total_vL'
         },
         'TeamHitting_Total_vR': {
             'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54&season='+str(yearLst)+'&month=14&season1='+str(yearFst)+'&ind=0&team=0,ts&rost=0&age=0&filter=&players=0',
             'headers': 2,
-            'database': 2,
+            'database': 8,
             'tblname': 'teamhitting_total_vR'
         },
         'TeamHitting_Season_vL': {
@@ -294,23 +295,23 @@ def main():
         'TeamHitting_Last14': {
             'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=1&season='+str(yearLst)+'&month=2&season1='+str(yearFst)+'&ind=0&team=0%2cts&rost=0&age=0&filter=&players=0',
             'headers': 1,
-            'database': 1,
+            'database': 7,
             'tblname': 'teamhitting_last14'
         }
     }
-    
+
     hitterUrlName = ['hitters_season_vL', 'hitters_season_vR', 'hitters_total_vL', 'hitters_total_vR', \
                     'hitters_last14', 'hitters_last7']
     
     hitterUrlDict = {
         'hitters_season_vL': {
-            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=13&season1='+str(yearFst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
+            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=13&season1='+str(yearLst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
             'headers': 3,
             'database': 3,
             'tblname': 'hitters_season_vL'
         },
         'hitters_season_vR': {
-            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=14&season1='+str(yearFst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
+            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=14&season1='+str(yearLst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
             'headers': 3,
             'database': 3,
             'tblname': 'hitters_season_vR'
@@ -318,25 +319,25 @@ def main():
         'hitters_total_vL': {
             'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=13&season1='+str(yearFst)+'&ind=0&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
             'headers': 3,
-            'database': 3,
+            'database': 5,
             'tblname': 'hitters_total_vL'
         },
         'hitters_total_vR': {
             'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=14&season1='+str(yearFst)+'&ind=0&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
             'headers': 3,
-            'database': 3,
+            'database': 5,
             'tblname': 'hitters_total_vR'
         },
         'hitters_last14': {
-            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=2&season1='+str(yearFst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
+            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=2&season1='+str(yearLst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
             'headers': 3,
-            'database': 3,
+            'database': 5,
             'tblname': 'hitters_last14'
         },
         'hitters_last7': {
-            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=1&season1='+str(yearFst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
+            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=1&season1='+str(yearLst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
             'headers': 3,
-            'database': 3,
+            'database': 5,
             'tblname': 'hitters_last7'
         }
     }
@@ -345,7 +346,7 @@ def main():
     
     pitcherUrlDict = {
         'pitchers_season': {
-            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,7,8,13,36,37,38,40,-1,120,121,217,-1,41,42,43,44,-1,117,118,119,-1,6,45,124,-1,62,122&season='+str(yearLst)+'&month=0&season1='+str(yearFst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
+            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,7,8,13,36,37,38,40,-1,120,121,217,-1,41,42,43,44,-1,117,118,119,-1,6,45,124,-1,62,122&season='+str(yearLst)+'&month=0&season1='+str(yearLst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
             'headers': 4,
             'database': 4,
             'tblname': 'pitchers_season'
@@ -353,7 +354,7 @@ def main():
         'pitchers_total': {
             'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,7,8,13,36,37,38,40,-1,120,121,217,-1,41,42,43,44,-1,117,118,119,-1,6,45,124,-1,62,122&season='+str(yearLst)+'&month=0&season1='+str(yearFst)+'&ind=0&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
             'headers': 4,
-            'database': 4,
+            'database': 6,
             'tblname': 'pitchers_total'
         }
     }
