@@ -72,33 +72,35 @@ def getSchedule(datestr):
     gameList = []
     for game in games:          # Get all the game data, then create a dict for each team (home/away)
         ### Home Team
-        gameinfo = {}
-        for key in keyList:
-            gameinfo[key] = game[key]
-        gameinfo['homeaway'] = 'Home'
-        gameinfo['team'] = gameinfo['home_name_abbrev']
-        gameinfo['opp'] =  gameinfo['away_name_abbrev']
-        gameinfo['pitcher'] = gameinfo['home_probable_pitcher']['name_display_roster']
-        gameinfo['opp_pitcher'] = gameinfo['away_probable_pitcher']['name_display_roster']
-        gameinfo['pitcher_hand'] = gameinfo['home_probable_pitcher']['throwinghand']
-        gameinfo['opp_pitcher_hand'] = gameinfo['away_probable_pitcher']['throwinghand']
-        gameinfo['pitcher_id'] = gameinfo['home_probable_pitcher']['id']
-        gameinfo['opp_pitcher_id'] = gameinfo['away_probable_pitcher']['id']
-        gameList.append(gameinfo)
-        ### Away Team
-        gameinfo = {}
-        for key in keyList:
-            gameinfo[key] = game[key]
-        gameinfo['homeaway'] = 'Away'
-        gameinfo['team'] = gameinfo['away_name_abbrev']
-        gameinfo['opp'] =  gameinfo['home_name_abbrev']
-        gameinfo['pitcher'] = gameinfo['away_probable_pitcher']['name_display_roster']
-        gameinfo['opp_pitcher'] = gameinfo['home_probable_pitcher']['name_display_roster']
-        gameinfo['pitcher_hand'] = gameinfo['away_probable_pitcher']['throwinghand']
-        gameinfo['opp_pitcher_hand'] = gameinfo['home_probable_pitcher']['throwinghand']
-        gameinfo['pitcher_id'] = gameinfo['away_probable_pitcher']['id']
-        gameinfo['opp_pitcher_id'] = gameinfo['home_probable_pitcher']['id']
-        gameList.append(gameinfo)
+        print game
+        if 'home_probable_pitcher' in game.keys():
+            gameinfo = {}
+            for key in keyList:
+                gameinfo[key] = game[key]
+            gameinfo['homeaway'] = 'Home'
+            gameinfo['team'] = gameinfo['home_name_abbrev']
+            gameinfo['opp'] =  gameinfo['away_name_abbrev']
+            gameinfo['pitcher'] = gameinfo['home_probable_pitcher']['name_display_roster']
+            gameinfo['opp_pitcher'] = gameinfo['away_probable_pitcher']['name_display_roster']
+            gameinfo['pitcher_hand'] = gameinfo['home_probable_pitcher']['throwinghand']
+            gameinfo['opp_pitcher_hand'] = gameinfo['away_probable_pitcher']['throwinghand']
+            gameinfo['pitcher_id'] = gameinfo['home_probable_pitcher']['id']
+            gameinfo['opp_pitcher_id'] = gameinfo['away_probable_pitcher']['id']
+            gameList.append(gameinfo)
+            ### Away Team
+            gameinfo = {}
+            for key in keyList:
+                gameinfo[key] = game[key]
+            gameinfo['homeaway'] = 'Away'
+            gameinfo['team'] = gameinfo['away_name_abbrev']
+            gameinfo['opp'] =  gameinfo['home_name_abbrev']
+            gameinfo['pitcher'] = gameinfo['away_probable_pitcher']['name_display_roster']
+            gameinfo['opp_pitcher'] = gameinfo['home_probable_pitcher']['name_display_roster']
+            gameinfo['pitcher_hand'] = gameinfo['away_probable_pitcher']['throwinghand']
+            gameinfo['opp_pitcher_hand'] = gameinfo['home_probable_pitcher']['throwinghand']
+            gameinfo['pitcher_id'] = gameinfo['away_probable_pitcher']['id']
+            gameinfo['opp_pitcher_id'] = gameinfo['home_probable_pitcher']['id']
+            gameList.append(gameinfo)
     
     return gameList
 
