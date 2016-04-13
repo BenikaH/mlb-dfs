@@ -149,7 +149,11 @@ def consensus():
             game.append('consensus')
         for items in rows.find_all('td'):
             if len(items.text.strip()) > 0:
-                game.append(items.text.strip())
+                if items.text.strip() == '50%':
+                    game.append('consensus')
+                    game.append(items.text.strip())
+                else:
+                    game.append(items.text.strip())
     gameList = [game[i:i+8] for i in range(0, len(game), 8)]
     bet_pct = {}
     for game in gameList:
@@ -168,7 +172,7 @@ def consensus():
             # print pct
             bet_pct[game[5].split(' ', 1)[1]] = round(pct,2)
             # print game[2], 1-pct, game[6], pct
-        # print bet_pct
+    # print bet_pct
 
     return bet_pct
     
@@ -276,7 +280,7 @@ def main():
     localfile = 'local.txt'
     with open(localfile) as f:
         g = f.read()
-        print g
+        
     if g == 'True':
         local = True
     else:
