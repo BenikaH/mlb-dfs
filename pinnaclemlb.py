@@ -273,7 +273,14 @@ def security(site,fldr):
 
 def main():
     
-    local = False
+    localfile = 'local.txt'
+    with open(localfile) as f:
+        g = f.read()
+        print g
+    if g == 'True':
+        local = True
+    else:
+        local = False
 
     if local == False:
         fldr = 'mlb-dfs/'
