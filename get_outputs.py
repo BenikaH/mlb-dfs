@@ -6,6 +6,28 @@ import csv
 from bs4 import BeautifulSoup
 import datetime
 
+def datestring(dt):
+
+    year = dt.year
+    month = dt.month
+    day = dt.day
+
+    if day < 10:
+        day = '0' + str(day)
+    else:
+        day = str(day)
+
+    if month < 10:
+        month = '0' + str(month)
+    else:
+        month = str(month)
+
+    datestr = str(year) + '-' + month + '-' + day
+    dayid = str(year) + month + day
+
+    dates = [datestr, dayid]
+
+    return dates
 
 def opensql(filenm, fldr, con, day_id):
     
@@ -21,6 +43,8 @@ def opensql(filenm, fldr, con, day_id):
     with con:
         x = con.cursor()
         x.execute(query)
+        columns = x.description
+        print columns
 
         rows = x.fetchall()
 
@@ -49,6 +73,9 @@ def security(site,fldr):
 
 def main():
     
+    today = datetime.date.today()
+    dates = datestring(today)
+    
     localfile = 'local.txt'
     with open(localfile) as f:
         g = f.read()
@@ -67,7 +94,7 @@ def main():
         fldr = ''
         con = MySQLdb.connect('localhost', 'root', '', 'dfs-mlb')            #### Localhost connection
     
-    day_id = '20160414'    
+    day_id = dates[1]
     opensql('pitching_query.sql', fldr, con, day_id)
 
     return
