@@ -221,7 +221,14 @@ def addtoDb(con, data, tblname, tbltype, year):
     
 def main():
     
-    local = False
+    localfile = 'local.txt'
+    with open(localfile) as f:
+        g = f.read()
+        
+    if g == 'True':
+        local = True
+    else:
+        local = False
 
     if local == False:
         fldr = 'mlb-dfs/'
