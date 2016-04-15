@@ -20,11 +20,21 @@ ths.iso as 'opp ISO',
 ths.k_pct as 'opp K%',
 odds.ml,
 odds.total,
-odds.opp_total
-
+odds.opp_total,
+odds.opp_total_chg,
+sal.day1,
+sal.day2,
+sal.day3,
+sal.day14,
+sal.day30,
+sal.day1 - sal.day2 as '1 Day Chg',
+sal.day1 - sal.day3 as '2 Day Chg',
+sal.day1 - sal.day7 as '1 Week Chg',
+sal.day1 - sal.day14 as '2 Week Chg',
+sal.day1 - sal.day30 as '30 Day Chg'
 
 from
-(select pid, pcode, s as dk_sal from draftkings_playerlist where day_id = '20160414' and ContestStartTimeSuffix = 'Main' and pp = 1) dk
+(select pid, pcode, s as dk_sal from draftkings_playerlist where day_id = '@today' and ContestStartTimeSuffix = 'Main' and pp = 1) dk
 
 left join player_map pmap on dk.pcode = pmap.nfbc_id
 left join schedule sc on pmap.mlb_id = sc.pitcher_id
@@ -42,6 +52,7 @@ left join ( select
 			from
 			v_teamhitting_season where season = '2016') ths on opptmap.Nickname = ths.team and sc.pitcher_hand = ths.vsArm
 left join team_map tmap on sc.team = tmap.Abbr
-left join pinnacle_odds odds on tmap.PinnacleName = odds.team and odds.day_id = '20160414'
+left join pinnacle_odds odds on tmap.PinnacleName = odds.team and odds.day_id = '@today'
+left join dksal_history sal on sal.player_id = pmap.mlb_id
 
 order by odds.ml asc, dk.dk_sal desc;
