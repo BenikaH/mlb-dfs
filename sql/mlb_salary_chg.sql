@@ -1,4 +1,3 @@
--- 30 day salary by player/playerid
 select
 player_id,
 playernm_full,
