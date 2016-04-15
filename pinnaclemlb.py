@@ -41,7 +41,7 @@ def getData(dates):
     gameList = []
     for event in events:
 
-        if event['Totals'] and event['PeriodNumber'] == 0 and event['DateAndTime'][:10] == dates[0]:      ### Only get Full Game Line (fix this later!)
+        if event['Totals'] and event['PeriodNumber'] == 0 and event['DateAndTime'][:10] == dates[0] and event['IsHandicapEmpty'] == False:      ### Only get Full Game Line (fix this later!)
             total = float(event['Totals']['Min'])               ### Game Total
             gamedate = event['DateAndTime'][:10]
             gametime = event['DateAndTime'][11:-1]        
