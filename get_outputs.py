@@ -29,7 +29,7 @@ def datestring(dt):
 
     return dates
 
-def opensql(filenm, fldr, con, day_id):
+def opensql(filenm, fldr, con, day_id, slate):
     
     sqlfile = fldr + 'sql/' + filenm
 
@@ -37,7 +37,7 @@ def opensql(filenm, fldr, con, day_id):
     
         g = f.read()
 
-        query = g.replace('\n',' ').replace('@today', day_id)
+        query = g.replace('\n',' ').replace('@today', day_id).replace('@slate', slate)
         print query
 
     with con:
@@ -95,7 +95,9 @@ def main():
         con = MySQLdb.connect('localhost', 'root', '', 'dfs-mlb')            #### Localhost connection
     
     day_id = dates[1]
-    opensql('pitching_query.sql', fldr, con, day_id)
+    slate = 'Main'
+    opensql('pitching_query.sql', fldr, con, day_id, slate)
+    opensql('hitter_query.sql', fldr, con, day_id, slate)
 
     return
 

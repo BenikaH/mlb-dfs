@@ -18,8 +18,8 @@ sc.opp,
 ths.wOBA as 'opp wOBA',
 ths.iso as 'opp ISO',
 ths.k_pct as 'opp K%',
-(ths.k_pct / 20.4 * pt.k9) as 'adj K/9 CY',
-(ths.k_pct / 20.4 * ps.k9) as 'adj K/9 3Y',
+(ths.k_pct / 20.4 * pt.k9) as 'adj K/9 3Y',
+(ths.k_pct / 20.4 * ps.k9) as 'adj K/9 CY',
 odds.ml,
 odds.total,
 odds.opp_total,
@@ -36,7 +36,7 @@ sal.day1 - sal.day14 as '2 Week Chg',
 sal.day1 - sal.day30 as '30 Day Chg'
 
 from
-(select pid, pcode, s as dk_sal from draftkings_playerlist where day_id = '@today' and ContestStartTimeSuffix = 'Main' and pp = 1) dk
+(select pid, pcode, s as dk_sal from draftkings_playerlist where day_id = '@today' and ContestStartTimeSuffix = '@slate' and pp = 1) dk
 
 left join player_map pmap on dk.pcode = pmap.nfbc_id
 left join schedule sc on pmap.mlb_id = sc.pitcher_id
