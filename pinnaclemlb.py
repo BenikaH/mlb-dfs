@@ -301,6 +301,7 @@ def main():
     gameList = linemovement(con, homeawaySplit(getData(dates), consensus()), dates)
     addtoDb(con, dates, gameList)
     print gameList
+    return
 
 
 # {'over_price': 114.0, 'opp': u'San Diego Padres', 'opp_ml': 104.0, 'ml': -113.0, 'odds': 151.0, 'HomeAway': 'Away', 'pitcher': u'S. Kazmir', 'opp_spread': 1.5, 'under_price': -126.0, 'consensus': 0.47, 'opp_odds': -164.0, 'opp_pitcher': u'J. Shields', 'spread': -1.5, 'time': u'19:10:00', 'team': u'Los Angeles Dodgers', 'date': u'2016-04-05', 'game_id': 575440282, 'opp_total': 2.905, 'total': 7.5, 'team_total': 3.635}

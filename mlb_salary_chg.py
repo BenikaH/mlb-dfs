@@ -9,6 +9,11 @@ import datetime
 
 def opensql(filenm, fldr, con):
     
+    with con:
+        query = "DELETE FROM dksal_history;"
+        x = con.cursor()
+        x.execute(query)
+    
     sqlfile = fldr + 'sql/' + filenm
 
     with open(sqlfile) as f:
