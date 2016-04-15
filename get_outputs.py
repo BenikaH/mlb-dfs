@@ -29,7 +29,7 @@ def datestring(dt):
 
     return dates
 
-def opensql(filenm, fldr, con, day_id, slate):
+def opensql(title, filenm, fldr, con, day_id, slate):
     
     sqlfile = fldr + 'sql/' + filenm
 
@@ -47,6 +47,10 @@ def opensql(filenm, fldr, con, day_id, slate):
         print columns
 
         rows = x.fetchall()
+        fp = open(title+'.csv', 'w')
+        myFile = csv.writer(fp)
+        myFile.writerows(rows)
+        fp.close()
 
         for row in rows:
             print 'row', row
@@ -96,8 +100,10 @@ def main():
     
     day_id = dates[1]
     slate = 'Main'
-    opensql('pitching_query.sql', fldr, con, day_id, slate)
-    opensql('hitter_query.sql', fldr, con, day_id, slate)
+    pitchertitle = 'Pitchers-'+slate+'-'+day_id
+    hitterstitle = 'Hitters-'+slate+'-'+day_id
+    opensql(pitchertitle, 'pitching_query.sql', fldr, con, day_id, slate)
+    opensql(hitterstitle, 'hitter_query.sql', fldr, con, day_id, slate)
 
     return
 
