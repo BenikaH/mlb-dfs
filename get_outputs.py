@@ -47,7 +47,7 @@ def opensql(title, filenm, fldr, con, day_id, slate):
         print columns
 
         rows = x.fetchall()
-        fp = open(title+'.csv', 'w')
+        fp = open('csv_outputs/'+title+'.csv', 'w')
         myFile = csv.writer(fp)
         myFile.writerows(rows)
         fp.close()
