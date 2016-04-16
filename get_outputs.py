@@ -99,8 +99,8 @@ def main(slate):
         con = MySQLdb.connect('localhost', 'root', '', 'dfs-mlb')            #### Localhost connection
     
     day_id = dates[1]
-    pitchertitle = 'Pitchers-'+slate+'-'+day_id
-    hitterstitle = 'Hitters-'+slate+'-'+day_id
+    pitchertitle = 'Pitchers-'+slate.replace('(','').replace(')','')+'-'+day_id
+    hitterstitle = 'Hitters-'+slate.replace('(','').replace(')','')+'-'+day_id
     opensql(pitchertitle, 'pitching_query.sql', fldr, con, day_id, slate)
     opensql(hitterstitle, 'hitter_query.sql', fldr, con, day_id, slate)
 
