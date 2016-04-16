@@ -75,7 +75,7 @@ def security(site,fldr):
     
     return info
 
-def main():
+def main(slate):
     
     today = datetime.date.today()
     dates = datestring(today)
@@ -99,7 +99,6 @@ def main():
         con = MySQLdb.connect('localhost', 'root', '', 'dfs-mlb')            #### Localhost connection
     
     day_id = dates[1]
-    slate = 'Main'
     pitchertitle = 'Pitchers-'+slate+'-'+day_id
     hitterstitle = 'Hitters-'+slate+'-'+day_id
     opensql(pitchertitle, 'pitching_query.sql', fldr, con, day_id, slate)
@@ -108,4 +107,4 @@ def main():
     return
 
 if __name__ == '__main__':
-    main()
+    main('Main')
