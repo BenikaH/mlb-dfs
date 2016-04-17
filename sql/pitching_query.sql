@@ -39,7 +39,7 @@ from
 (select pid, pcode, s as dk_sal from draftkings_playerlist where day_id = '@today' and ContestStartTimeSuffix = '@slate' and pp = 1) dk
 
 left join player_map pmap on dk.pcode = pmap.nfbc_id
-left join schedule sc on pmap.mlb_id = sc.pitcher_id
+left join schedule sc on pmap.mlb_id = sc.pitcher_id and sc.day_id = '@today'
 left join pitchers_total pt on pmap.fg_id = pt.player_id
 left join pitchers_season ps on pmap.fg_id = ps.player_id and ps.season = '2016'
 left join team_map opptmap on sc.opp = opptmap.Abbr
