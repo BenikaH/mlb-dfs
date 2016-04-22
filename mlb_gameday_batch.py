@@ -326,10 +326,10 @@ def main():
                 for game in games:
                     gamedata = getgamedata(game, datestr, playerList)
                 
-                if gamedata is not None:
-                    addtoDb(con, gamedata, datestr)
-                else:
-                    print "no gamedata"
+                    if gamedata is not None:
+                        addtoDb(con, gamedata, datestr)
+                    else:
+                        print "no gamedata"
             else:
                 print datestr, 'does not exist'
     
