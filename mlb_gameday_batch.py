@@ -9,7 +9,7 @@ import MySQLdb
 import time
 
 def security(site,fldr):
-
+    
     info = []
     myfile = fldr + 'myinfo.txt'
 
@@ -21,9 +21,14 @@ def security(site,fldr):
             siteDict[newlist[0]] = {}
             siteDict[newlist[0]]['username'] = newlist[1]
             siteDict[newlist[0]]['password'] = newlist[2]
-
-    info = [siteDict[site]['username'],siteDict[site]['password']]
-
+            if len(newlist) > 3:
+                siteDict[newlist[0]]['server'] = newlist[3]
+    
+    if site == 'mysql':
+        info = [siteDict[site]['username'],siteDict[site]['password'], siteDict[site]['server']]
+    else:           
+        info = [siteDict[site]['username'],siteDict[site]['password']]
+    
     return info
     
 
@@ -300,7 +305,7 @@ def main():
     if local == False:
         fldr = 'mlb-dfs/'
         serverinfo = security('mysql', fldr)
-        con = MySQLdb.connect(host='mysql.server', user=serverinfo[0], passwd=serverinfo[1], db='MurrDogg4$dfs-mlb')
+        con = MySQLdb.connect(host=serverinfo[2], user=serverinfo[0], passwd=serverinfo[1], db='MurrDogg4$dfs-mlb')
 
     else:
         fldr = ''
