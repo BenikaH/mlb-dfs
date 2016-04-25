@@ -7,7 +7,7 @@ def main():
 
     pinnaclemlb.main()
     starting_lineups.main()
-    get_outputs.main()
+    get_outputs.main('Main')
 
     return
 
