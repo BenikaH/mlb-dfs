@@ -8,7 +8,7 @@ import time
 
 
 def security(site,fldr):
-    
+
     info = []
     myfile = fldr + 'myinfo.txt'
 
@@ -22,12 +22,12 @@ def security(site,fldr):
             siteDict[newlist[0]]['password'] = newlist[2]
             if len(newlist) > 3:
                 siteDict[newlist[0]]['server'] = newlist[3]
-    
+
     if site == 'mysql':
         info = [siteDict[site]['username'],siteDict[site]['password'], siteDict[site]['server']]
-    else:           
+    else:
         info = [siteDict[site]['username'],siteDict[site]['password']]
-    
+
     return info
 
 
@@ -49,8 +49,7 @@ def getplayerdata(url):
 
         if len(data) > 1:
             headers = data[0].split(";")
-
-
+            print headers
             players = []
             for item in data[1:]:
                 player = item.split(";")
@@ -60,6 +59,7 @@ def getplayerdata(url):
             for player in players:
                 playerdict = {}
                 for header in headers:
+                    print player
                     playerdict[header] = player[headers.index(header)].strip()
                 playerlist.append(playerdict)
 
@@ -166,7 +166,7 @@ def main():
     localfile = 'local.txt'
     with open(localfile) as f:
         g = f.read()
-        
+
     if g == 'True':
         local = True
     else:
@@ -180,7 +180,7 @@ def main():
     else:
         fldr = ''
         con = MySQLdb.connect('localhost', 'root', '', 'dfs-mlb')            #### Localhost connection
-        
+
     gameday = datetime.date.today() - datetime.timedelta(days=1)            #### Get yesterday's results
     datestr = datestring(gameday)[1]
 
