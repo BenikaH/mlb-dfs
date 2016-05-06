@@ -30,12 +30,12 @@ def datestring(dt):
     dates = [datestr, dayid]
 
     return dates
-    
+
 def getData(dates):
-    
+
     r = requests.get("http://www.pinnaclesports.com/webapi/1.15/api/v1/GuestLines/NonLive/3/246").json()
     # League ID 246 (regular season), SportID = 3 (MLB)
-    
+
     events = r['Leagues'][0]['Events']
     game = []
     gameList = []
@@ -44,23 +44,25 @@ def getData(dates):
         if event['Totals'] and event['PeriodNumber'] == 0 and event['DateAndTime'][:10] == dates[0] and event['IsHandicapEmpty'] == False:      ### Only get Full Game Line (fix this later!)
             total = float(event['Totals']['Min'])               ### Game Total
             gamedate = event['DateAndTime'][:10]
-            gametime = event['DateAndTime'][11:-1]        
+            gametime = event['DateAndTime'][11:-1]
             game.append(event['EventId'])                       # Event ID
             game.append(gamedate)                               # Game Date
             game.append(gametime)                               # Game Time
             game.append(event['Totals']['Min'])
             game.append(event['Totals']['OverPrice'])
             game.append(event['Totals']['UnderPrice'])
-            
+
             # print '\neventID:', event['EventId']                        # Game ID
             # print 'date:', gamedate
             # print 'time:', gametime
             # print 'total:', total
             # print 'Over Price:', event['Totals']['OverPrice']    # Over Odds
             # print 'Under Price:', event['Totals']['UnderPrice']  # Under Odds
-            
-        
+
+
             for participants in event['Participants']:
+                teamTotalOdds = 100
+                teamTotal = 0
                 spread = float(participants['Handicap']['Min'])
                 teamTotalOdds = int(participants['TeamTotals']['OverPrice'])
                 teamTotal = participants['TeamTotals']['Min']
@@ -77,7 +79,7 @@ def getData(dates):
                 # print adjTotalOdds
                 # print decTotalOdds
                 # print teamTotal
-                teamTotal = round((3-decTotalOdds)*teamTotal,3)     # Expected team total 
+                teamTotal = round((3-decTotalOdds)*teamTotal,3)     # Expected team total
                 game.append(participants['Name'])
                 game.append(participants['Pitcher'])
                 game.append(participants['MoneyLine'])
@@ -97,10 +99,10 @@ def getData(dates):
 
 
 def homeawaySplit(gameList, consensus):
-    
+
     headers = ['HomeAway', 'game_id', 'date', 'time', 'total', 'team', 'pitcher', 'ml', 'spread', 'odds', 'team_total', \
     'opp', 'opp_pitcher', 'opp_ml', 'opp_spread', 'opp_odds', 'opp_total', 'over_price', 'under_price']
-    
+
     aworder = [0,1,2,3,6,7,8,9,10,11,12,13,14,15,16,17,4,5]
     hmorder = [0,1,2,3,12,13,14,15,16,17,6,7,8,9,10,11,4,5]
 
@@ -117,25 +119,25 @@ def homeawaySplit(gameList, consensus):
         holder = [game[i] for i in aworder]  # List method to put items into away team order
         holder.insert(0, 'Away')             # Add 'Away' to away teams
         gameinfo.append(holder)
-    
+
 
     for team in gameinfo:
         for header in headers:
             gameDict[header] = team[headers.index(header)]
         teamlist.append(gameDict)
         gameDict = {}
-    
+
     #### Add consensus % to list
     for team in teamlist:
         if team['team'] not in consensus.keys():
             team['consensus'] = ''
         else:
             team['consensus'] = consensus[team['team']]
-    
+
     return teamlist
-    
+
 def consensus():
-    
+
     game = []
     gameList = []
     r = requests.get("http://www.oddsshark.com/mlb/consensus-picks").text
@@ -143,7 +145,7 @@ def consensus():
     soup = BeautifulSoup(r)
 
     data = soup.find('table', {'class': 'consensus-table'})
-    
+
     for rows in data.find_all('tr')[1:-1]:
         if 'class' in rows.attrs.keys() and 'favoured' in rows.attrs['class']:
             game.append('consensus')
@@ -175,13 +177,13 @@ def consensus():
     # print bet_pct
 
     return bet_pct
-    
-    
+
+
 def linemovement(con, gameinfo, dates):
     # See if there is data in the table - if there is not, they are opening lines
-    
+
     changes = ['total_chg', 'team_total_chg', 'opp_total_chg', 'spread_chg']
-    
+
     with con:
 
     # bring in past results
@@ -194,6 +196,7 @@ def linemovement(con, gameinfo, dates):
         else:
             firstPull = True
     # print firstPull
+    # firstPull = True
     # If this is the first run, insert in placeholders and make the opening lines set to the current lines
     if firstPull:
         for game in gameinfo:
@@ -203,7 +206,7 @@ def linemovement(con, gameinfo, dates):
             game['team_total_open'] = game['team_total']
             game['opp_total_open'] = game['opp_total']
             game['spread_open'] = game['spread']
-            
+
     # If this isn't the first run, calculate the change and insert into the list
     else:
         holder = []
@@ -214,7 +217,7 @@ def linemovement(con, gameinfo, dates):
             pastresults.append(holder)
             holder = []
         # print "\n\n", pastresults, "\n\n"
-                
+
         for past in pastresults:
             for game in gameinfo:
                 if past[5] == game['team'] and past[2] == game['game_id']:
@@ -227,9 +230,9 @@ def linemovement(con, gameinfo, dates):
                     game['team_total_chg'] = float(past[22]) - float(game['team_total'])
                     game['opp_total_chg'] = float(past[23]) - float(game['opp_total'])
                     game['spread_chg'] = float(past[24]) - float(game['spread'])
-        
+
     return gameinfo
-    
+
 def addtoDb(con, dates, gamelist):
 
     query = "DELETE FROM pinnacle_odds WHERE day_id = %s" % (dates[1])
@@ -252,13 +255,13 @@ def addtoDb(con, dates, gamelist):
                 i['total_open'], i['team_total_open'], i['opp_total_open'], i['spread_open'], i['total_chg'], i['team_total_chg'], i['opp_total_chg'], i['spread_chg'])
             x = con.cursor()
             x.execute(query)
-    
+
     print dates[0], "complete"
-    
+
     return
 
 def security(site,fldr):
-    
+
     info = []
     myfile = fldr + 'myinfo.txt'
 
@@ -272,20 +275,20 @@ def security(site,fldr):
             siteDict[newlist[0]]['password'] = newlist[2]
             if len(newlist) > 3:
                 siteDict[newlist[0]]['server'] = newlist[3]
-    
+
     if site == 'mysql':
         info = [siteDict[site]['username'],siteDict[site]['password'], siteDict[site]['server']]
-    else:           
+    else:
         info = [siteDict[site]['username'],siteDict[site]['password']]
-    
+
     return info
 
 def main():
-    
+
     localfile = 'local.txt'
     with open(localfile) as f:
         g = f.read()
-        
+
     if g == 'True':
         local = True
     else:
@@ -302,7 +305,7 @@ def main():
 
     today = datetime.date.today()
     dates = datestring(today)
-    
+
     gameList = linemovement(con, homeawaySplit(getData(dates), consensus()), dates)
     addtoDb(con, dates, gameList)
     print gameList
@@ -310,6 +313,6 @@ def main():
 
 
 # {'over_price': 114.0, 'opp': u'San Diego Padres', 'opp_ml': 104.0, 'ml': -113.0, 'odds': 151.0, 'HomeAway': 'Away', 'pitcher': u'S. Kazmir', 'opp_spread': 1.5, 'under_price': -126.0, 'consensus': 0.47, 'opp_odds': -164.0, 'opp_pitcher': u'J. Shields', 'spread': -1.5, 'time': u'19:10:00', 'team': u'Los Angeles Dodgers', 'date': u'2016-04-05', 'game_id': 575440282, 'opp_total': 2.905, 'total': 7.5, 'team_total': 3.635}
-    
+
 if __name__ == '__main__':
     main()
