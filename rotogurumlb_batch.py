@@ -191,9 +191,11 @@ def main():
             month = datestr[4:6]
             year = datestr[:4]
 
-            dkurl = 'http://rotoguru1.com/cgi-bin/byday.pl?game=dk&month='+str(month)+'&day='+str(day)+'&year='+str(year)+'&scsv=1'
-            fdurl = 'http://rotoguru1.com/cgi-bin/byday.pl?game=fd&month='+str(month)+'&day='+str(day)+'&year='+str(year)+'&scsv=1'
+            login = security('Rotoguru', fldr)
 
+            dkurl = 'http://rotoguru1.com/cgi-bin/byday.pl?game=dk&month='+str(month)+'&day='+str(day)+'&year='+str(year)+'&scsv=1&user='+login[0]+'&key='+login[1]
+            fdurl = 'http://rotoguru1.com/cgi-bin/byday.pl?game=fd&month='+str(month)+'&day='+str(day)+'&year='+str(year)+'&scsv=1&user='+login[0]+'&key='+login[1]
+            
             dkdata = getplayerdata(dkurl)
 
             if dkdata is not None:

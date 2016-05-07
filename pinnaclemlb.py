@@ -182,7 +182,7 @@ def consensus():
 def linemovement(con, gameinfo, dates):
     # See if there is data in the table - if there is not, they are opening lines
 
-    changes = ['total_chg', 'team_total_chg', 'opp_total_chg', 'spread_chg']
+    changes = ['total_chg', 'team_total_chg', 'opp_total_chg', 'spread_chg', 'ml_chg']
 
     with con:
 
@@ -206,6 +206,7 @@ def linemovement(con, gameinfo, dates):
             game['team_total_open'] = game['team_total']
             game['opp_total_open'] = game['opp_total']
             game['spread_open'] = game['spread']
+            game['ml_open'] = game['ml']
 
     # If this isn't the first run, calculate the change and insert into the list
     else:
@@ -226,10 +227,12 @@ def linemovement(con, gameinfo, dates):
                     game['team_total_open'] = past[22]
                     game['opp_total_open'] = past[23]
                     game['spread_open'] = past[24]
+                    game['ml_open'] = past[25]
                     game['total_chg'] = float(past[21]) - float(game['total'])
                     game['team_total_chg'] = float(past[22]) - float(game['team_total'])
                     game['opp_total_chg'] = float(past[23]) - float(game['opp_total'])
                     game['spread_chg'] = float(past[24]) - float(game['spread'])
+                    game['ml_chg'] = int(past[25]) - int(game['ml'])
 
     return gameinfo
 
@@ -244,15 +247,18 @@ def addtoDb(con, dates, gamelist):
             query = "INSERT INTO pinnacle_odds (day, day_id, game_id, time, home_away, team, pitcher, \
             opp, opp_pitcher, team_total, opp_total, total, ml, spread, \
             odds, consensus, opp_ml, opp_spread, opp_odds, over_price, under_price, \
-            total_open, team_total_open, opp_total_open, spread_open, total_chg, team_total_chg, opp_total_chg, spread_chg) \
+            total_open, team_total_open, opp_total_open, spread_open, ml_open, total_chg, team_total_chg, \
+            opp_total_chg, spread_chg, ml_chg) \
                     VALUES ("'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                             "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                             "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
-                            "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'")" % \
+                            "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
+                            "'"%s"'", "'"%s"'", "'"%s"'")" % \
                 (i['date'], dates[1], i['game_id'], i['time'], i['HomeAway'], i['team'], i['pitcher'], \
                 i['opp'], i['opp_pitcher'], i['team_total'], i['opp_total'], i['total'], i['ml'], i['spread'], \
                 i['odds'], i['consensus'], i['opp_ml'], i['opp_spread'], i['opp_odds'], i['over_price'], i['under_price'], \
-                i['total_open'], i['team_total_open'], i['opp_total_open'], i['spread_open'], i['total_chg'], i['team_total_chg'], i['opp_total_chg'], i['spread_chg'])
+                i['total_open'], i['team_total_open'], i['opp_total_open'], i['spread_open'], i['ml_open'], i['total_chg'], i['team_total_chg'], \
+                i['opp_total_chg'], i['spread_chg'], i['ml_chg'])
             x = con.cursor()
             x.execute(query)
 
