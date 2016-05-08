@@ -5,6 +5,7 @@ sc.team,
 sc.opp,
 sc.pitcher_hand,
 dk.dk_sal,
+imp.imp_pts,
 sc.venue,
 sc.time_date,
 pt.ip as 'IP 3Y',
@@ -56,5 +57,6 @@ left join ( select
 left join team_map tmap on sc.team = tmap.Abbr
 left join pinnacle_odds odds on tmap.PinnacleName = odds.team and odds.day_id = '@today'
 left join dksal_history sal on sal.player_id = pmap.mlb_id
+left join v_implied_pts imp on dk.dk_sal = imp.dk_sal and position = 'Pitcher'
 
 order by odds.ml asc, dk.dk_sal desc;
