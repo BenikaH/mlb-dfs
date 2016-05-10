@@ -25,16 +25,18 @@ odds.ml,
 odds.total,
 odds.opp_total,
 odds.opp_total_chg,
+dk.dk_sal as 'day0',
 sal.day1,
 sal.day2,
 sal.day3,
 sal.day14,
 sal.day30,
-sal.day1 - sal.day2 as '1 Day Chg',
-sal.day1 - sal.day3 as '2 Day Chg',
-sal.day1 - sal.day7 as '1 Week Chg',
-sal.day1 - sal.day14 as '2 Week Chg',
-sal.day1 - sal.day30 as '30 Day Chg'
+dk.dk_sal - sal.day1 as '1 Day Chg'
+dk.dk_sal - sal.day2 as '2 Day Chg',
+dk.dk_sal - sal.day3 as '3 Day Chg',
+dk.dk_sal - sal.day7 as '1 Week Chg',
+dk.dk_sal - sal.day14 as '2 Week Chg',
+dk.dk_sal - sal.day30 as '30 Day Chg'
 
 from
 (select pid, pcode, s as dk_sal from draftkings_playerlist where day_id = '@today' and ContestStartTimeSuffix = '@slate' and pp = 1) dk
@@ -44,7 +46,7 @@ left join schedule sc on pmap.mlb_id = sc.pitcher_id and sc.day_id = '@today'
 left join pitchers_total pt on pmap.fg_id = pt.player_id
 left join pitchers_season ps on pmap.fg_id = ps.player_id and ps.season = '2016'
 left join team_map opptmap on sc.opp = opptmap.Abbr
-left join ( select 
+left join ( select
 			case when vsArm = 'L' then 'LHP' when vsArm = 'R' then 'RHP' else 'NA' end as vsArm,
 			season,
 			team,
