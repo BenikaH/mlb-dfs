@@ -31,7 +31,7 @@ sal.day2,
 sal.day3,
 sal.day14,
 sal.day30,
-dk.dk_sal - sal.day1 as '1 Day Chg'
+dk.dk_sal - sal.day1 as '1 Day Chg',
 dk.dk_sal - sal.day2 as '2 Day Chg',
 dk.dk_sal - sal.day3 as '3 Day Chg',
 dk.dk_sal - sal.day7 as '1 Week Chg',
