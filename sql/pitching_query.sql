@@ -25,18 +25,18 @@ odds.ml,
 odds.total,
 odds.opp_total,
 odds.opp_total_chg,
-dk.dk_sal as 'day0',
-sal.day1,
-sal.day2,
-sal.day3,
-sal.day14,
 sal.day30,
-dk.dk_sal - sal.day1 as '1 Day Chg',
-dk.dk_sal - sal.day2 as '2 Day Chg',
-dk.dk_sal - sal.day3 as '3 Day Chg',
-dk.dk_sal - sal.day7 as '1 Week Chg',
+sal.day14,
+sal.day3,
+sal.day2,
+sal.day1,
+dk.dk_sal as 'day0',
+dk.dk_sal - sal.day30 as '30 Day Chg',
 dk.dk_sal - sal.day14 as '2 Week Chg',
-dk.dk_sal - sal.day30 as '30 Day Chg'
+dk.dk_sal - sal.day7 as '1 Week Chg',
+dk.dk_sal - sal.day3 as '3 Day Chg',
+dk.dk_sal - sal.day2 as '2 Day Chg',
+dk.dk_sal - sal.day1 as '1 Day Chg'
 
 from
 (select pid, pcode, s as dk_sal from draftkings_playerlist where day_id = '@today' and ContestStartTimeSuffix = '@slate' and pp = 1) dk
