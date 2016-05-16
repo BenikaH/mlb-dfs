@@ -228,11 +228,11 @@ def linemovement(con, gameinfo, dates):
                     game['opp_total_open'] = past[23]
                     game['spread_open'] = past[24]
                     game['ml_open'] = past[25]
-                    game['total_chg'] = float(past[21]) - float(game['total'])
-                    game['team_total_chg'] = float(past[22]) - float(game['team_total'])
-                    game['opp_total_chg'] = float(past[23]) - float(game['opp_total'])
-                    game['spread_chg'] = float(past[24]) - float(game['spread'])
-                    game['ml_chg'] = int(past[25]) - int(game['ml'])
+                    game['total_chg'] =  float(game['total']) - float(past[21])
+                    game['team_total_chg'] = float(game['team_total']) - float(past[22])
+                    game['opp_total_chg'] = float(game['opp_total']) - float(past[23])
+                    game['spread_chg'] = float(game['spread']) - float(past[24])
+                    game['ml_chg'] = int(game['ml']) - int(past[25])
 
     return gameinfo
 
