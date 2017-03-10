@@ -177,7 +177,7 @@ def main():
         rankedlist = getRanks(masterlist, weights)
 
         for player in rankedlist:
-            playerscore.append([day_id, player['PlayerID'], player['Player'], round(player['TotalRankPts'], 2), player['TotalRank']])
+            playerscore.append([day_id, player['PlayerID'], player['Player'], round(player['TotalRankPts'], 2), player['TotalRank'], player['Vegas_ML']])
 
     for player in playerscore:
         print player
