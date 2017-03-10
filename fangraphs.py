@@ -54,7 +54,7 @@ def security(site,fldr):
     
     return info
 
-def getteamdata(url, headers):
+def getteamdata(url, headers, season):
     
     results = []
     teamDict = {}
@@ -86,7 +86,8 @@ def getteamdata(url, headers):
         ## if it is not a L/R split and is not a seasonal breakout, append a '0' for season
         if arm == True:
             if len(results) + 2 == len(headers):
-                results.insert(0, '0')                              # Season = 0 for total
+                # results.insert(0, '0')                              # Season = 0 for total
+                results.insert(0, season)
                 results.insert(0, vsArm)                            # Append L/R split arm
             else:
                 results.insert(0, vsArm)
@@ -102,7 +103,7 @@ def getteamdata(url, headers):
     return teamList
     
         
-def getplayerdata(url, headers):
+def getplayerdata(url, headers, season):
     
     results = []
     playerDict = {}
@@ -121,7 +122,6 @@ def getplayerdata(url, headers):
         arm = False
         ssn_col = 2
         vsArm = ''
-    
     r = requests.get(url).text
     soup = BeautifulSoup(r)
     
@@ -145,13 +145,15 @@ def getplayerdata(url, headers):
         for col in cols[1:]:
             results.append(col.text.replace(' %', ''))              # append all results to temp list and remove % sign
         if len(results) < len(headers):
-            results.insert(ssn_col, '0')
+            results.insert(ssn_col, season)
+            # results.insert(ssn_col, '0')
         for header in headers:
             playerDict[header] = results[headers.index(header)]
         playerList.append(playerDict)                                   # append individual dicts to teamList
         results = []
         playerDict = {}
     
+    print playerList[2]
     return playerList
     
 def addtoDb(con, data, tblname, tbltype, year):
@@ -317,13 +319,13 @@ def main():
     
     hitterUrlDict = {
         'hitters_season_vL': {
-            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=13&season1='+str(yearLst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
+            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=13&season1='+str(yearLst)+'&ind=0&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
             'headers': 3,
             'database': 3,
             'tblname': 'hitters_season_vL'
         },
         'hitters_season_vR': {
-            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=14&season1='+str(yearLst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
+            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=14&season1='+str(yearLst)+'&ind=0&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
             'headers': 3,
             'database': 3,
             'tblname': 'hitters_season_vR'
@@ -341,13 +343,13 @@ def main():
             'tblname': 'hitters_total_vR'
         },
         'hitters_last14': {
-            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=2&season1='+str(yearLst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
+            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=2&season1='+str(yearLst)+'&ind=0&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
             'headers': 3,
             'database': 5,
             'tblname': 'hitters_last14'
         },
         'hitters_last7': {
-            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=1&season1='+str(yearLst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
+            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,6,34,35,36,21,23,37,38,39,40,53,41,52,51,50,54,42,47&season='+str(yearLst)+'&month=1&season1='+str(yearLst)+'&ind=0&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
             'headers': 3,
             'database': 5,
             'tblname': 'hitters_last7'
@@ -358,7 +360,7 @@ def main():
     
     pitcherUrlDict = {
         'pitchers_season': {
-            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,7,8,13,36,37,38,40,-1,120,121,217,-1,41,42,43,44,-1,117,118,119,-1,6,45,124,-1,62,122&season='+str(yearLst)+'&month=0&season1='+str(yearLst)+'&ind=1&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
+            'url': 'http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,7,8,13,36,37,38,40,-1,120,121,217,-1,41,42,43,44,-1,117,118,119,-1,6,45,124,-1,62,122&season='+str(yearLst)+'&month=0&season1='+str(yearLst)+'&ind=0&team=0&rost=0&age=0&filter=&players=0&page=1_5000',
             'headers': 4,
             'database': 4,
             'tblname': 'pitchers_season'
@@ -379,7 +381,7 @@ def main():
         tblname = teamUrlDict[urls]['tblname']
         database = teamUrlDict[urls]['database']
         print urls, "\n"
-        data = getteamdata(teamUrlDict[urls]['url'], headers)
+        data = getteamdata(teamUrlDict[urls]['url'], headers, yearLst)
         addtoDb(con, data, tblname, database, yearLst)
         time.sleep(1)
 
@@ -388,7 +390,7 @@ def main():
         tblname = hitterUrlDict[urls]['tblname']
         database = hitterUrlDict[urls]['database']
         print urls, "\n"
-        data = getplayerdata(hitterUrlDict[urls]['url'], headers)
+        data = getplayerdata(hitterUrlDict[urls]['url'], headers, yearLst)
         # print data
         addtoDb(con, data, tblname, database, yearLst)
         time.sleep(1)
@@ -398,7 +400,7 @@ def main():
         tblname = pitcherUrlDict[urls]['tblname']
         database = pitcherUrlDict[urls]['database']
         print urls, "\n"
-        data = getplayerdata(pitcherUrlDict[urls]['url'], headers)
+        data = getplayerdata(pitcherUrlDict[urls]['url'], headers, yearLst)
         # print data
         addtoDb(con, data, tblname, database, yearLst)
         time.sleep(1)
