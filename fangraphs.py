@@ -153,7 +153,6 @@ def getplayerdata(url, headers, season):
         results = []
         playerDict = {}
     
-    print playerList[2]
     return playerList
     
 def addtoDb(con, data, tblname, tbltype, year):
